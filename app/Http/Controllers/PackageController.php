@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Package;
+use Illuminate\Http\Request;
+
+class PackageController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+
+    {   $packages=Package::get();
+        
+        if(auth()->user()->role_id==1){
+            return view('admin.package.packages',compact('packages'));
+        }else{
+            return view('package.packages',compact('packages'));
+        }        
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create($id)
+    {
+        $package=Package::findorFail($id);
+        
+        if(isset(auth()->user()->card)){
+            return view('package.payment',compact('package'));
+        }else{
+            return view('package.card',compact('id'));
+        }
+
+    
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Package $package)
+    {
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $package=Package::findorFail($id);
+        $typs=[$package->type,'basic','gold','primium'];
+
+        return view('admin.package.edit',compact('package','typs'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $package=Package::findorFail($id);
+        $package->update([
+            'prix'=>$request->prix,
+            'nb_offre'=>$request->nb_offre,
+        ]);
+        return redirect('home/packages');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Package $package)
+    {
+        //
+    }
+}
